@@ -327,6 +327,11 @@ export interface Ticker {
   type: string;
 }
 
+export interface OpponentMultisig {
+  receivers: string[];
+  threshold: number;
+}
+
 export interface RawTransactionRequest {
   asset_id: string;
   opponent_multisig: OpponentMultisig;
@@ -334,11 +339,6 @@ export interface RawTransactionRequest {
   pin?: string;
   trace_id?: string;
   memo?: string;
-}
-
-export interface OpponentMultisig {
-  receivers: string[];
-  threshold: number;
 }
 
 export interface RawTransactionPayment {
