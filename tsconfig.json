@@ -1,0 +1,15 @@
+{
+  "extends": "@foxone/dev/config/tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@foxone/dev/*": ["packages/dev/src/*"]
+    },
+    "resolveJsonModule": true,
+    "noImplicitAny": false,
+    "skipLibCheck": true,
+    "typeRoots": [
+      "./node_modules/@types"
+    ]
+  }
+}

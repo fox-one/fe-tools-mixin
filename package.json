@@ -1,0 +1,29 @@
+{
+  "name": "fe-mixin-tools",
+  "version": "1.0.0",
+  "description": "Mixin Network javascript tools",
+  "main": "index.js",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "resolutions": {
+    "typescript": "^4.2.4"
+  },
+  "scripts": {
+    "build": "foxone-dev-build-ts",
+    "build:release": "foxone-ci-ghact-build",
+    "lint": "foxone-dev-run-lint",
+    "test": "foxone-dev-run-test --coverage"
+  },
+  "author": "Fox.ONE",
+  "license": "GPL 3.0",
+  "dependencies": {
+    "@foxone/dev": "^0.1.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^26.0.23",
+    "@types/jsonwebtoken": "^8.5.1",
+    "@types/uuid": "^8.3.0"
+  }
+}
