@@ -19,7 +19,7 @@
   },
   "author": "Fox.ONE",
   "dependencies": {
-    "@foxone/dev": "^0.1.1"
+    "@foxone/dev": "^0.1.5"
   },
   "devDependencies": {
     "@types/jest": "^26.0.23",

@@ -31,7 +31,6 @@ import type {
 
 import { HttpMethod } from "./types";
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 function createEndpoints(provider: ProviderInterface) {
   return {
     codes(code: string) {
