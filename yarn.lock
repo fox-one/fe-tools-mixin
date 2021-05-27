@@ -1443,9 +1443,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@foxone/dev@npm:^0.1.5":
-  version: 0.1.5
-  resolution: "@foxone/dev@npm:0.1.5"
+"@foxone/dev@npm:^0.1.6":
+  version: 0.1.6
+  resolution: "@foxone/dev@npm:0.1.6"
   dependencies:
     "@babel/cli": ^7.13.16
     "@babel/core": ^7.13.16
@@ -1532,7 +1532,7 @@ __metadata:
     foxone-exec-prettier: scripts/foxone-exec-prettier
     foxone-exec-tsc: scripts/foxone-exec-tsc.cjs
     foxone-exec-webpack: scripts/foxone-exec-webpack.cjs
-  checksum: 50fb4bec1bc0d1124b8ab5eb5bba85f18c7ed5af7f1351e12fede1936cabbeb6b5365b915989caad8ebc73372b300df936eb6bfc992e95d2373ea6a68b656dd3
+  checksum: 351cf126d797f1a19d37e594d0593af275c9aeb6a8f7f4a4ef0a212b8b7898a6c90adf89131d5f69285c2aec9242ca4a0b91be8e8fbb3c66d2bcd54e85033f15
   languageName: node
   linkType: hard
 
@@ -4885,7 +4885,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "fe-mixin-tools@workspace:."
   dependencies:
-    "@foxone/dev": ^0.1.5
+    "@foxone/dev": ^0.1.6
     "@types/jest": ^26.0.23
     "@types/jsonwebtoken": ^8.5.1
     "@types/uuid": ^8.3.0

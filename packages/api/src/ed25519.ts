@@ -1,5 +1,5 @@
 /* eslint-disable */
-module.exports = function crypto_scalarmult(q, n, p) {
+export default function crypto_scalarmult(q, n, p) {
   var z = new Uint8Array(32);
   var x = new Float64Array(80),
     r,
@@ -56,12 +56,12 @@ module.exports = function crypto_scalarmult(q, n, p) {
   M(x16, x16, x32);
   pack25519(q, x16);
   return 0;
-};
+}
 
-function gf(init) {
+function gf(init: number[] | undefined = undefined) {
   var i,
     r = new Float64Array(16);
-  if (init) for (i = 0; i < init.length; i++) r[i] = init[i];
+  if (init) for (i = 0; i < init?.length; i++) r[i] = init[i];
   return r;
 }
 function unpack25519(o, n) {
