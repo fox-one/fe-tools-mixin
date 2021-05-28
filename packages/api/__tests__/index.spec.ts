@@ -4,6 +4,7 @@ import axios from "axios";
 // test session, dont use this secret for transfer
 import RSASession from "./keystore/rsa.json";
 import Ed25519Session from "./keystore/ed25519.json";
+import { signEncryptedPin } from "../src/encrypt";
 
 describe("mixin sdk contents", () => {
   test("encrypts should be exported", () => {
@@ -84,6 +85,44 @@ describe("mixin sdk contents", () => {
 
     try {
       await mixin.endpoints.getAssets();
+      done();
+    } catch (error) {
+      done(error);
+    }
+  });
+
+  test("rsa pin should be valid", async (done) => {
+    const mixin = new Mixin();
+
+    mixin.config(RSASession);
+
+    try {
+      const { pin, pin_token, private_key, session_id } = RSASession;
+      const oldPin = signEncryptedPin(pin, pin_token, session_id, private_key);
+      const newPin = signEncryptedPin(pin, pin_token, session_id, private_key);
+
+      console.log(oldPin, newPin);
+
+      await mixin.endpoints.updatePin(oldPin, newPin);
+      done();
+    } catch (error) {
+      done(error);
+    }
+  });
+
+  test("ed25519 pin should be valid", async (done) => {
+    const mixin = new Mixin();
+
+    mixin.config(Ed25519Session);
+
+    try {
+      const { pin, pin_token, private_key, session_id } = Ed25519Session;
+      const oldPin = signEncryptedPin(pin, pin_token, session_id, private_key);
+      const newPin = signEncryptedPin(pin, pin_token, session_id, private_key);
+
+      console.log(oldPin, newPin);
+
+      await mixin.endpoints.updatePin(oldPin, newPin);
       done();
     } catch (error) {
       done(error);

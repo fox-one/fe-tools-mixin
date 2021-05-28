@@ -2,7 +2,8 @@
 import {
   signAuthenticationToken,
   generateEd25519SessionKeypair,
-  generateRSASessionKeyPair
+  generateRSASessionKeyPair,
+  signEncryptedPin
 } from "../src/encrypt";
 import forge from "node-forge";
 
@@ -85,5 +86,19 @@ describe("mixin encrypts", () => {
     );
 
     expect(typeof token).toBe("string");
+  });
+
+  test("signEncryptedPin with rsa session", () => {
+    const { pin, pin_token, private_key, session_id } = RSASession;
+    const encrypted = signEncryptedPin(pin, pin_token, session_id, private_key);
+
+    expect(typeof encrypted).toEqual("string");
+  });
+
+  test("signEncryptedPin with ed25519 session", () => {
+    const { pin, pin_token, private_key, session_id } = Ed25519Session;
+    const encrypted = signEncryptedPin(pin, pin_token, session_id, private_key);
+
+    expect(typeof encrypted).toEqual("string");
   });
 });

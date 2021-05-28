@@ -125,9 +125,10 @@ function hexToBytes(hex: string) {
   return bytes;
 }
 
-function signRsaPin(pinToken: string, privateKey: string, sessionId: string) {
-  const _privateKey = forge.pki.privateKeyFromPem(privateKey);
-  const pinKey = _privateKey.decrypt(pinToken, "RSA-OAEP", {
+function signRsaPin(pinToken, privateKey, sessionId) {
+  pinToken = Buffer.from(pinToken, "base64");
+  privateKey = forge.pki.privateKeyFromPem(privateKey);
+  const pinKey = privateKey.decrypt(pinToken, "RSA-OAEP", {
     label: sessionId,
     md: forge.md.sha256.create()
   });
@@ -135,7 +136,7 @@ function signRsaPin(pinToken: string, privateKey: string, sessionId: string) {
   return hexToBytes(forge.util.binary.hex.encode(pinKey));
 }
 
-function scalarMult(curvePriv: Buffer, publicKey: Buffer) {
+function scalarMult(curvePriv, publicKey) {
   curvePriv[0] &= 248;
   curvePriv[31] &= 127;
   curvePriv[31] |= 64;
@@ -146,7 +147,7 @@ function scalarMult(curvePriv: Buffer, publicKey: Buffer) {
   return sharedKey;
 }
 
-function privateKeyToCurve25519(privateKey: Buffer) {
+function privateKeyToCurve25519(privateKey) {
   const seed = privateKey.slice(0, 32);
   const sha512 = crypto.createHash("sha512");
 
@@ -160,10 +161,10 @@ function privateKeyToCurve25519(privateKey: Buffer) {
   return digest.slice(0, 32);
 }
 
-function signEd25519PIN(pinToken: string, privateKey: Buffer) {
-  const _pinToken = Buffer.from(pinToken, "base64");
+function signEd25519PIN(pinToken, privateKey) {
+  pinToken = Buffer.from(pinToken, "base64");
 
-  return scalarMult(privateKeyToCurve25519(privateKey), _pinToken.slice(0, 32));
+  return scalarMult(privateKeyToCurve25519(privateKey), pinToken.slice(0, 32));
 }
 
 export function signEncryptedPin(
@@ -171,8 +172,8 @@ export function signEncryptedPin(
   pinToken: string,
   sessionId: string,
   privateKey: string,
-  iterator: number | string = ""
-): string {
+  iterator: any = ""
+) {
   const blockSize = 16;
   const _privateKey = toBuffer(privateKey, "base64");
   const pinKey =
@@ -181,13 +182,13 @@ export function signEncryptedPin(
       : signRsaPin(pinToken, privateKey, sessionId);
   const time = new Uint64LE((Date.now() / 1000) | 0).toBuffer();
 
-  if (iterator === undefined || iterator === "") {
+  if (iterator == undefined || iterator === "") {
     iterator = Date.now() * 1000000;
   }
 
-  const _iterator = new Uint64LE(iterator as number).toBuffer();
+  iterator = new Uint64LE(iterator).toBuffer();
   const _pin = Buffer.from(pin, "utf8");
-  let buf = Buffer.concat([_pin, Buffer.from(time), Buffer.from(_iterator)]);
+  let buf = Buffer.concat([_pin, Buffer.from(time), Buffer.from(iterator)]);
   const padding = blockSize - (buf.length % blockSize);
   const paddingArray: number[] = [];
 
@@ -200,9 +201,9 @@ export function signEncryptedPin(
   const cipher = crypto.createCipheriv("aes-256-cbc", pinKey, iv16);
 
   cipher.setAutoPadding(false);
-  let encryptedPinBuff = cipher.update(buf.toString(), "utf-8");
+  let encrypted_pin_buff = cipher.update(buf as any, "utf-8");
 
-  encryptedPinBuff = Buffer.concat([iv16, encryptedPinBuff]);
+  encrypted_pin_buff = Buffer.concat([iv16, encrypted_pin_buff]);
 
-  return Buffer.from(encryptedPinBuff).toString("base64");
+  return Buffer.from(encrypted_pin_buff).toString("base64");
 }
