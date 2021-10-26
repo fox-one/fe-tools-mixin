@@ -5,6 +5,8 @@ import { Uint64LE } from "int64-buffer";
 import { v4 as uuid } from "uuid";
 import cryptoScalarmult from "./ed25519";
 
+const ITERATOR_STORAGE_KEY = '__iterator__';
+
 export interface KeyPair {
   publicKey: string;
   privateKey: string;
@@ -183,8 +185,16 @@ export function signEncryptedPin(
   const time = new Uint64LE((Date.now() / 1000) | 0).toBuffer();
 
   if (iterator == undefined || iterator === "") {
-    iterator = Date.now() * 1000000;
+    const iteratorStr = localStorage.getItem(ITERATOR_STORAGE_KEY);
+    if (iteratorStr) {
+      iterator = parseInt(iteratorStr) + 1000;
+    } else {
+      iterator = Date.now() * 1000000;
+    }
   }
+
+  localStorage.setItem(ITERATOR_STORAGE_KEY, iterator.toString());
+
 
   iterator = new Uint64LE(iterator).toBuffer();
   const _pin = Buffer.from(pin, "utf8");
