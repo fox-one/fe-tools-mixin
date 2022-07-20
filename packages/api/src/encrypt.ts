@@ -1,4 +1,8 @@
-import forge from "node-forge";
+import asn1 from "node-forge/lib/asn1";
+import pki from "node-forge/lib/pki";
+import util from "node-forge/lib/util";
+import md from "node-forge/lib/md";
+import ed25519 from "node-forge/lib/ed25519";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import { Uint64LE } from "int64-buffer";
@@ -15,18 +19,16 @@ export function unix(): number {
 }
 
 export function generateRSASessionKeyPair(): KeyPair {
-  const keypair = forge.pki.rsa.generateKeyPair({ bits: 1024, e: 0x10001 });
-  const body = forge.asn1
-    .toDer(forge.pki.publicKeyToAsn1(keypair.publicKey))
-    .getBytes();
-  const publicKey = forge.util.encode64(body, 64);
-  const privateKey = forge.pki.privateKeyToPem(keypair.privateKey);
+  const keypair = pki.rsa.generateKeyPair({ bits: 1024, e: 0x10001 });
+  const body = asn1.toDer(pki.publicKeyToAsn1(keypair.publicKey)).getBytes();
+  const publicKey = util.encode64(body, 64);
+  const privateKey = pki.privateKeyToPem(keypair.privateKey);
 
   return { privateKey, publicKey };
 }
 
 export function generateEd25519SessionKeypair(): KeyPair {
-  const keypair = forge.pki.ed25519.generateKeyPair();
+  const keypair = pki.ed25519.generateKeyPair();
   const publicKey = Buffer.from(keypair.publicKey)
     .toString("base64")
     .replace(/\+/g, "-")
@@ -65,7 +67,7 @@ function getEd25519Sign(payload, privateKey: Buffer) {
   const result = [header, payload];
   const sign = base64url(
     Buffer.from(
-      forge.pki.ed25519.sign({
+      ed25519.sign({
         encoding: "utf8",
         message: result.join("."),
         privateKey
@@ -95,9 +97,9 @@ export function signAuthenticationToken(
     data = "";
   }
 
-  const md = forge.md.sha256.create();
+  const _md = md.sha256.create();
 
-  md.update(forge.util.encodeUtf8(method.toUpperCase() + uri + data));
+  _md.update(util.encodeUtf8(method.toUpperCase() + uri + data));
   const _privateKey = toBuffer(privateKey, "base64");
   const jwtPayload = {
     exp: expire,
@@ -105,7 +107,7 @@ export function signAuthenticationToken(
     jti: uuid(),
     scp: scp || "FULL",
     sid: sessionId,
-    sig: md.digest().toHex(),
+    sig: _md.digest().toHex(),
     uid: clientId,
     ...payload
   };
@@ -127,13 +129,13 @@ function hexToBytes(hex: string) {
 
 function signRsaPin(pinToken, privateKey, sessionId) {
   pinToken = Buffer.from(pinToken, "base64");
-  privateKey = forge.pki.privateKeyFromPem(privateKey);
+  privateKey = pki.privateKeyFromPem(privateKey);
   const pinKey = privateKey.decrypt(pinToken, "RSA-OAEP", {
     label: sessionId,
-    md: forge.md.sha256.create()
+    md: md.sha256.create()
   });
 
-  return hexToBytes(forge.util.binary.hex.encode(pinKey));
+  return hexToBytes(util.binary.hex.encode(pinKey));
 }
 
 function scalarMult(curvePriv, publicKey) {

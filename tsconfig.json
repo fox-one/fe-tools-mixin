@@ -3,7 +3,10 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@foxone/dev/*": ["packages/dev/src/*"]
+      "@foxone/mvm": ["packages/mvm/src"],
+      "@foxone/mvm/*": ["packages/mvm/src/*"],
+      "@foxone/mixin-api": ["packages/api/src"],
+      "@foxone/mixin-api/*": ["packages/api/src/*"]
     },
     "resolveJsonModule": true,
     "noImplicitAny": false,
