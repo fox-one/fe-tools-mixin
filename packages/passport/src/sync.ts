@@ -1,5 +1,9 @@
-import type { AuthData } from "./index";
 import { isMVM } from "./index";
+
+export interface AuthData {
+  token: string;
+  channel: string;
+}
 
 export default function (options, state) {
   return async (payload: AuthData) => {

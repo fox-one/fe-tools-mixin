@@ -14,30 +14,6 @@ export interface PassportOptions {
   getTokenByCode?: (code: string) => Promise<string>;
 }
 
-export interface PaymentPayload {
-  // transfer params
-  assetId: string;
-  amount: string;
-  recipient?: string;
-  traceId?: string;
-  memo?: string;
-  // multisig params
-  code?: string;
-  multisig?: boolean;
-  // common params
-  info: {
-    symbol: string;
-    logo: string;
-    amount: string;
-  };
-  checker?: () => Promise<boolean>;
-}
-
-export interface AuthData {
-  token: string;
-  channel: string;
-}
-
 export type channel = "fennec" | "mixin" | "metamask" | "walletconnect";
 
 export function isMVM(channel) {
@@ -68,7 +44,7 @@ function install(Vue: VueConstructor, options: PassportOptions) {
     getAssets: createAssetsAction(state),
     getBalance: createBalanceAction(state),
     payment: createPaymentAction(Vue, state),
-    sync: createSyncAction(Vue, options)
+    sync: createSyncAction(options, state)
   };
 }
 

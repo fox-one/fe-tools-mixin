@@ -1,12 +1,31 @@
-import type { PaymentPayload } from "./index";
 import type { VueConstructor } from "vue/types/umd";
 
 import { genPaymentUrl } from "@foxone/utils/mixin";
+
+export interface PaymentPayload {
+  // transfer params
+  assetId: string;
+  amount: string;
+  recipient?: string;
+  traceId?: string;
+  memo?: string;
+  // multisig params
+  code?: string;
+  multisig?: boolean;
+  // common params
+  info: {
+    symbol: string;
+    logo: string;
+    amount: string;
+  };
+  checker?: () => Promise<boolean>;
+}
 
 export default function (Vue: VueConstructor, state) {
   return async (payload: PaymentPayload) => {
     const code = payload.code ?? "";
     const multisig = payload.multisig ?? false;
+
     const asset_id = payload?.assetId ?? "";
     const opponent_id = payload?.recipient ?? "";
     const amount = payload?.amount ?? "";
@@ -39,6 +58,8 @@ export default function (Vue: VueConstructor, state) {
           const receivers = resp?.receivers;
           const threshold = resp?.threshold;
           const memo = resp?.memo;
+          const amount = resp?.amount;
+          const asset_id = resp?.asset_id;
 
           await state.mvm.withdraw({
             action: { extra: memo, receivers, threshold },
@@ -56,10 +77,9 @@ export default function (Vue: VueConstructor, state) {
     };
 
     await Vue.prototype.$uikit.payment.show({
+      ...payload,
       actions,
       channel: state.channel,
-      checker: payload.checker,
-      info: payload.info,
       scheme
     });
   };

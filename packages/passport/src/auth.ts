@@ -14,12 +14,17 @@ export default function (Vue: VueConstructor, options: PassportOptions, state) {
     state.token = state.mvm.getAuthToken();
   };
 
+  const isMetaMaskAvailable = () => {
+    return Boolean(window?.ethereum?.isMetaMask);
+  };
+
   return () => {
     const { getTokenByCode } = options;
 
     return new Promise((resolve, reject) => {
       Vue.prototype.$uikit.auth.show({
         checkFennec: () => state.fennec.isAvailable(),
+        checkMetamask: () => isMetaMaskAvailable(),
         handleAuth: async (data) => {
           state.channel = data.type;
 
