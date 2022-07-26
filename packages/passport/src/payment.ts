@@ -4,8 +4,8 @@ import { genPaymentUrl } from "@foxone/utils/mixin";
 
 export interface PaymentPayload {
   // transfer params
-  assetId: string;
-  amount: string;
+  assetId?: string;
+  amount?: string;
   recipient?: string;
   traceId?: string;
   memo?: string;
@@ -13,6 +13,7 @@ export interface PaymentPayload {
   code?: string;
   multisig?: boolean;
   // common params
+  hideCheckingModal?: boolean;
   info: {
     symbol: string;
     logo: string;

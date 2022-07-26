@@ -1,19 +1,19 @@
 import { isMVM, State } from "./index";
 
 export default function (state: State) {
-  return async () => {
+  return async (id: string) => {
     if (state.channel === "mixin") {
-      return await state.mixin.endpoints.getAssets();
+      return await state.mixin.endpoints.getAsset(id);
     }
 
     if (state.channel === "fennec") {
-      return (await state.fennec.ctx?.wallet.getAssets()) ?? [];
+      return await state.fennec.ctx?.wallet.getAsset(id);
     }
 
     if (isMVM(state.channel)) {
       // TODO: complete this
     }
 
-    return [];
+    return null;
   };
 }

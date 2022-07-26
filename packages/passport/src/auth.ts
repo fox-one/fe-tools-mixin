@@ -1,12 +1,18 @@
 import type { PassportOptions } from "./index";
 import type { VueConstructor } from "vue/types/umd";
 
-import { isMVM } from "./index";
+import { isMVM, State } from "./index";
+import { AuthData } from "./sync";
 
-export default function (Vue: VueConstructor, options: PassportOptions, state) {
+export default function (
+  Vue: VueConstructor,
+  options: PassportOptions,
+  state: State
+) {
   const connectFennec = async () => {
     await state.fennec.connect(options.origin);
-    state.token = await state.fennec.ctx.wallet.signToken({ payload: {} });
+    state.token =
+      (await state.fennec.ctx?.wallet.signToken({ payload: {} })) ?? "";
   };
 
   const connectMVM = async (type) => {
@@ -14,42 +20,44 @@ export default function (Vue: VueConstructor, options: PassportOptions, state) {
     state.token = state.mvm.getAuthToken();
   };
 
-  const isMetaMaskAvailable = () => {
-    return Boolean(window?.ethereum?.isMetaMask);
+  const handleAuth = async (data, resolve, reject) => {
+    state.channel = data.type;
+
+    if (state.channel === "fennec") {
+      await connectFennec();
+      resolve({ channel: state.channel, token: state.token });
+    }
+
+    if (isMVM(state.channel)) {
+      await connectMVM(state.channel);
+      resolve({ channel: state.channel, token: state.token });
+    }
+
+    if (state.channel === "mixin") {
+      if (data.token) {
+        state.token = data.token;
+      } else {
+        if (!options.getTokenByCode) {
+          return reject("No auth actions provided");
+        }
+
+        state.token = await options.getTokenByCode(data.code);
+      }
+
+      resolve({ channel: state.channel, token: state.token });
+    }
   };
 
-  return () => {
-    const { getTokenByCode } = options;
-
+  return (): Promise<AuthData> => {
     return new Promise((resolve, reject) => {
       Vue.prototype.$uikit.auth.show({
         checkFennec: () => state.fennec.isAvailable(),
-        checkMetamask: () => isMetaMaskAvailable(),
+        checkMetamask: () => Boolean(window?.ethereum?.isMetaMask),
         handleAuth: async (data) => {
-          state.channel = data.type;
-
-          if (state.channel === "fennec") {
-            await connectFennec();
-            resolve({ channel: state.channel, token: state.token });
-          }
-
-          if (isMVM(state.channel)) {
-            await connectMVM(state.channel);
-            resolve({ channel: state.channel, token: state.token });
-          }
-
-          if (state.channel === "mixin") {
-            if (data.token) {
-              state.token = data.token;
-            } else {
-              if (!getTokenByCode) {
-                return reject("No auth actions provided");
-              }
-
-              state.token = await getTokenByCode(data.code);
-            }
-
-            resolve({ channel: state.channel, token: state.token });
+          try {
+            await handleAuth(data, resolve, reject);
+          } catch (error) {
+            reject(error);
           }
         },
         handleError(error) {

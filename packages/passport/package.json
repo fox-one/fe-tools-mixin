@@ -7,6 +7,7 @@
   "homepage": "https://github.com/fox-one/fe-tools-mixin",
   "author": "Fox.ONE",
   "license": "GPL 3.0",
+  "types": "index.d.ts",
   "dependencies": {
     "@foxone/fennec-dapp": "^0.5.4",
     "@foxone/mixin-api": "0.1.7",

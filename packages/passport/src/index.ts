@@ -5,6 +5,7 @@ import MixinAPI from "@foxone/mixin-api";
 import MVM from "@foxone/mvm";
 import createAuthAction from "./auth";
 import createAssetsAction from "./assets";
+import createAssetAction from "./asset";
 import createBalanceAction from "./balance";
 import createPaymentAction from "./payment";
 import createSyncAction from "./sync";
@@ -14,14 +15,39 @@ export interface PassportOptions {
   getTokenByCode?: (code: string) => Promise<string>;
 }
 
-export type channel = "fennec" | "mixin" | "metamask" | "walletconnect";
+export type Channel = "fennec" | "mixin" | "metamask" | "walletconnect" | "";
 
-export function isMVM(channel) {
+export type PassportMethods = {
+  auth: ReturnType<typeof createAuthAction>;
+  fennec: Fennec;
+  getAssets: ReturnType<typeof createAssetsAction>;
+  getAsset: ReturnType<typeof createAssetAction>;
+  getBalance: ReturnType<typeof createBalanceAction>;
+  mvm: MVM;
+  payment: ReturnType<typeof createPaymentAction>;
+  sync: ReturnType<typeof createSyncAction>;
+};
+
+export type State = {
+  channel: Channel;
+  fennec: Fennec;
+  mixin: MixinAPI;
+  mvm: MVM;
+  token: string;
+};
+
+declare module "vue/types/vue" {
+  interface Vue {
+    $passport: PassportMethods;
+  }
+}
+
+export function isMVM(channel: Channel) {
   return channel === "metamask" || channel === "walletconnect";
 }
 
 function install(Vue: VueConstructor, options: PassportOptions) {
-  const state = {
+  const state: State = {
     channel: "",
     fennec: new Fennec(),
     mixin: new MixinAPI(),
@@ -38,11 +64,13 @@ function install(Vue: VueConstructor, options: PassportOptions) {
     return config;
   });
 
-  Vue.prototype.$uikit = Vue.prototype.$uikit || {};
-  Vue.prototype.$uikit.passport = {
+  Vue.prototype.$passport = {
     auth: createAuthAction(Vue, options, state),
+    fennec: state.fennec,
+    getAsset: createAssetAction(state),
     getAssets: createAssetsAction(state),
     getBalance: createBalanceAction(state),
+    mvm: state.mvm,
     payment: createPaymentAction(Vue, state),
     sync: createSyncAction(options, state)
   };
