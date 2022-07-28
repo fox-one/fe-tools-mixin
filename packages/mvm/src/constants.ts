@@ -1,4 +1,4 @@
-export const MixinAssetID = "c94ac88f-4671-3976-b60a-09064f1811e8";
+export const XinAssetId = "c94ac88f-4671-3976-b60a-09064f1811e8";
 
 export const MVMChain = {
   blockExplorerUrls: ["https://scan.mvm.dev/"],

@@ -4,12 +4,23 @@ import { PaginationParams, Order } from "./api";
 export interface NetworkAsset {
   amount: string;
   asset_id: string;
+  asset_key: string;
+  capitalization: number;
   chain_id: string;
+  change_btc: string;
+  change_usd: string;
+  confirmations: number;
+  fee: string;
   icon_url: string;
+  liquidity: string;
+  mixin_id: string;
   name: string;
+  price_btc: string;
+  price_usd: string;
+  reserve: string;
   snapshots_count: number;
   symbol: string;
-  type: string;
+  type: "asset";
 }
 
 export interface NetworkTopAsset {

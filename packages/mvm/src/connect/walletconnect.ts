@@ -1,9 +1,9 @@
 import WalletConnectProvider from "@walletconnect/web3-provider";
 
-export default async function () {
+export default async function (infuraId: string) {
   //  Create WalletConnect Provider
   const provider = new WalletConnectProvider({
-    infuraId: "27e484dcd9e3efcfd25a83a78777cdf1"
+    infuraId
   });
 
   //  Enable session (triggers QR Code modal)

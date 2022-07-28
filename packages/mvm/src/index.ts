@@ -1,29 +1,45 @@
 import type { ProxyUser, WithdrawPayload } from "./types";
 
 import { providers, utils } from "ethers";
-import { MVMChain, MixinAssetID } from "./constants";
-import { fmtWithdrawAmount } from "./helper";
-import MixinAPI, { encrypts } from "@foxone/mixin-api";
-import ContractOperator from "./contract";
+import MixinAPI from "@foxone/mixin-api";
+import { MVMChain, XinAssetId } from "./constants";
+import { fmtWithdrawAmount, fmtBalance } from "./helper";
+import { signAuthenticationToken } from "@foxone/mixin-api/encrypt";
+import ContractOpt from "./contract";
+import Cache from "./cache";
 import bridge from "./bridge";
 import connect from "./connect";
 import EventEmitter from "events";
 
+export interface Config {
+  infuraId: string;
+}
+
 export default class MVM extends EventEmitter {
-  user: ProxyUser | null = null;
+  private user: ProxyUser | null = null;
 
-  oparetor: ContractOperator | null = null;
+  private contractOpt: ContractOpt | null = null;
 
-  library: providers.Web3Provider | null = null;
+  private library: providers.Web3Provider | null = null;
 
-  account = "";
+  public account = "";
 
-  connected = false;
+  public connected = false;
 
-  api = new MixinAPI();
+  private api = new MixinAPI();
 
-  async connenct(type: "metamask" | "walletconnect") {
-    const provider = await connect(type);
+  private config: Config;
+
+  private cache: Cache;
+
+  constructor(config: Config) {
+    super();
+    this.config = config;
+    this.cache = new Cache(this.api);
+  }
+
+  public async connenct(type: "metamask" | "walletconnect") {
+    const provider = await connect(type, this.config);
     const library = new providers.Web3Provider(provider);
     const accounts = await library.listAccounts();
 
@@ -48,38 +64,38 @@ export default class MVM extends EventEmitter {
     this.library = library;
     this.account = address;
     this.user = user;
-    this.oparetor = new ContractOperator(library);
+    this.contractOpt = new ContractOpt(library);
     this.connected = true;
+    this.api.config(user.key);
 
     provider.on("accountsChanged", () => this.disconnect());
     provider.on("chainChanged", () => this.disconnect());
     provider.on("disconnect", () => this.disconnect());
   }
 
-  disconnect() {
+  public disconnect() {
     this.emit("disconnect");
     this.clear();
   }
 
   clear() {
     this.account = "";
-    this.oparetor = null;
+    this.contractOpt = null;
     this.user = null;
     this.connected = false;
   }
 
-  async withdraw(payload: WithdrawPayload) {
+  public async withdraw(payload: WithdrawPayload) {
     const { action, amount, asset_id } = payload;
-    const asset = await this.api.endpoints.getNetworkAsset(asset_id);
-    const isXIN = asset.asset_id === MixinAssetID;
+    const isXIN = asset_id === XinAssetId;
     const extra = await bridge.getExtra(action);
     const to = await bridge.getProxyUserContract(this.account);
-    const value = fmtWithdrawAmount(amount, isXIN);
+    const value = fmtWithdrawAmount(String(amount), isXIN);
 
     if (isXIN) {
-      await this.oparetor?.execBridgeContrace("release", [to, extra, value]);
+      await this.contractOpt?.execBridgeContract("release", [to, extra, value]);
     } else {
-      await this.oparetor?.execAssetContract(asset_id, "transferWithExtra", [
+      await this.contractOpt?.execAssetContract(asset_id, "transferWithExtra", [
         to,
         value,
         extra
@@ -87,23 +103,39 @@ export default class MVM extends EventEmitter {
     }
   }
 
-  async getBalance(assetId: string) {
-    const isXIN = assetId === MixinAssetID;
-    let balance = "0";
+  public async getAsset(assetId: string) {
+    const isXIN = assetId === XinAssetId;
+    const resp = isXIN
+      ? ((await this.library?.getBalance(this.account)) ?? "0").toString()
+      : await this.contractOpt?.execAssetContract(assetId, "balanceOf", [
+          this.account
+        ]);
+    const balance = fmtBalance(resp, isXIN);
+    const asset = await this.cache.getAsset(assetId);
 
-    if (isXIN) {
-      const resp = await this.library?.getBalance(this.account);
+    return { ...asset, balance };
+  }
 
-      balance = resp?.toString() ?? "0";
-      balance = utils.formatUnits(balance, 18);
-    } else {
-      balance = await this.oparetor?.execAssetContract(assetId, "balanceOf", [
-        this.account
-      ]);
-      balance = utils.formatUnits(balance, 8);
-    }
+  public async getAssets() {
+    const tokens = await bridge.getTokenList(this.account);
 
-    return balance;
+    const assets = await Promise.all(
+      tokens.map(async (token) => {
+        const assetId = await this.contractOpt?.getAssetIdByContractAddress(
+          token.contractAddress
+        );
+
+        if (!assetId) return null;
+
+        const asset = await this.cache.getAsset(assetId);
+        const balance = fmtBalance(token.balance);
+
+        return { ...asset, balance };
+      })
+    );
+    const xin = await this.getAsset(XinAssetId);
+
+    return [xin, ...assets].filter((x) => !!x);
   }
 
   public getAuthToken() {
@@ -115,7 +147,7 @@ export default class MVM extends EventEmitter {
       throw new Error("No proxy user found");
     }
 
-    return encrypts.signAuthenticationToken(
+    return signAuthenticationToken(
       this.user.key.client_id,
       this.user.key.session_id,
       this.user.key.private_key,

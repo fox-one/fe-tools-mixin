@@ -51,7 +51,7 @@ export default function (Vue: VueConstructor, state) {
         }
       },
       mixin: () => {
-        window.location.href === scheme;
+        window.location.href = scheme;
       },
       mvm: async () => {
         if (multisig) {

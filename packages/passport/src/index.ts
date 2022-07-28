@@ -2,7 +2,7 @@ import { VueConstructor } from "vue/types/umd";
 
 import Fennec from "@foxone/fennec-dapp";
 import MixinAPI from "@foxone/mixin-api";
-import MVM from "@foxone/mvm";
+import MVM, { Config } from "@foxone/mvm";
 import createAuthAction from "./auth";
 import createAssetsAction from "./assets";
 import createAssetAction from "./asset";
@@ -12,6 +12,7 @@ import createSyncAction from "./sync";
 
 export interface PassportOptions {
   origin: string;
+  config: Config;
   getTokenByCode?: (code: string) => Promise<string>;
 }
 
@@ -51,7 +52,7 @@ function install(Vue: VueConstructor, options: PassportOptions) {
     channel: "",
     fennec: new Fennec(),
     mixin: new MixinAPI(),
-    mvm: new MVM(),
+    mvm: new MVM(options.config),
     token: ""
   };
 

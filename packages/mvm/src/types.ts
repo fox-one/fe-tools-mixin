@@ -22,3 +22,12 @@ export interface WithdrawPayload {
   amount: string | number;
   action: WithdrawAction;
 }
+
+export interface Token {
+  balance: string;
+  contractAddress: string;
+  decimals: string;
+  name: string;
+  symbol: string;
+  type: string;
+}

@@ -1,11 +1,9 @@
-import BigNumber from "bignumber.js";
-import { ethers } from "ethers";
+import { utils } from "ethers";
 
-export function fmtWithdrawAmount(amount: string | number, isXIN = false) {
-  const value = isXIN
-    ? new BigNumber(amount)
-    : new BigNumber(amount).times(1e8);
-  const temp = value.decimalPlaces(0, BigNumber.ROUND_DOWN).toString();
+export function fmtWithdrawAmount(amount: string, isXIN = false) {
+  return utils.parseUnits(amount, isXIN ? 18 : 8).toString();
+}
 
-  return isXIN ? ethers.utils.parseEther(temp).toString() : temp;
+export function fmtBalance(amount: string, isXIN = false) {
+  return utils.formatUnits(amount, isXIN ? 18 : 8).toString();
 }
