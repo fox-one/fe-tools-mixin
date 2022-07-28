@@ -24,7 +24,9 @@ export default class MVM extends EventEmitter {
 
   private contractOpt: ContractOpt | null = null;
 
-  private library: providers.Web3Provider | null = null;
+  public library: providers.Web3Provider | null = null;
+
+  public provider: any = null;
 
   public account = "";
 
@@ -44,7 +46,7 @@ export default class MVM extends EventEmitter {
 
   public async connenct(type: "metamask" | "walletconnect") {
     const provider = await connect(type, this.config);
-    const library = new providers.Web3Provider(provider);
+    const library = new providers.Web3Provider(provider, "any");
     const accounts = await library.listAccounts();
 
     try {
@@ -70,6 +72,7 @@ export default class MVM extends EventEmitter {
     const user = await bridge.getProxyUser(address);
 
     this.library = library;
+    this.provider = provider;
     this.account = address;
     this.user = user;
     this.contractOpt = new ContractOpt(library);
@@ -77,7 +80,11 @@ export default class MVM extends EventEmitter {
     this.api.config(user.key);
 
     provider.on("accountsChanged", () => this.disconnect());
-    provider.on("chainChanged", () => this.disconnect());
+    provider.on("chainChanged", (chain) => {
+      if (chain !== MVMChain.chainId) {
+        this.disconnect();
+      }
+    });
     provider.on("disconnect", () => this.disconnect());
   }
 
@@ -87,6 +94,11 @@ export default class MVM extends EventEmitter {
   }
 
   clear() {
+    this.provider.off("accountsChanged");
+    this.provider.off("chainChanged");
+    this.provider.off("disconnect");
+    this.library = null;
+    this.provider = null;
     this.account = "";
     this.contractOpt = null;
     this.user = null;

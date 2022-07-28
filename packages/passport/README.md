@@ -23,6 +23,7 @@ Vue.use(UIKit, {
 Vue.use(Passport, {
   origin: "...",
   config: { infuraId: "..." }
+  // ...
 });
 ```
 

@@ -12,6 +12,7 @@ import createSyncAction from "./sync";
 export interface PassportOptions {
   origin: string;
   config: Config;
+  onDisconnect?: () => void;
   getTokenByCode?: (code: string) => Promise<string>;
 }
 
@@ -61,6 +62,10 @@ function install(Vue: VueConstructor, options: PassportOptions) {
     };
 
     return config;
+  });
+
+  state.mvm.on("disconnect", () => {
+    options.onDisconnect?.();
   });
 
   Vue.prototype.$passport = {
