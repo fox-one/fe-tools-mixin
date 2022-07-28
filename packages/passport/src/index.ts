@@ -6,7 +6,6 @@ import MVM, { Config } from "@foxone/mvm";
 import createAuthAction from "./auth";
 import createAssetsAction from "./assets";
 import createAssetAction from "./asset";
-import createBalanceAction from "./balance";
 import createPaymentAction from "./payment";
 import createSyncAction from "./sync";
 
@@ -23,7 +22,6 @@ export type PassportMethods = {
   fennec: Fennec;
   getAssets: ReturnType<typeof createAssetsAction>;
   getAsset: ReturnType<typeof createAssetAction>;
-  getBalance: ReturnType<typeof createBalanceAction>;
   mvm: MVM;
   payment: ReturnType<typeof createPaymentAction>;
   sync: ReturnType<typeof createSyncAction>;
@@ -70,7 +68,6 @@ function install(Vue: VueConstructor, options: PassportOptions) {
     fennec: state.fennec,
     getAsset: createAssetAction(state),
     getAssets: createAssetsAction(state),
-    getBalance: createBalanceAction(state),
     mvm: state.mvm,
     payment: createPaymentAction(Vue, state),
     sync: createSyncAction(options, state)
