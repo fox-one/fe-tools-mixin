@@ -3,7 +3,11 @@ import type { ProxyUser, WithdrawPayload } from "./types";
 import { providers, utils } from "ethers";
 import MixinAPI from "@foxone/mixin-api";
 import { MVMChain, XinAssetId } from "./constants";
-import { fmtWithdrawAmount, fmtBalance } from "./helper";
+import {
+  fmtWithdrawAmount,
+  fmtBalance,
+  wrapPromiseWithTimeout
+} from "./helper";
 import { signAuthenticationToken } from "@foxone/mixin-api/encrypt";
 import ContractOpt from "./contract";
 import Cache from "./cache";
@@ -44,16 +48,20 @@ export default class MVM extends EventEmitter {
     const accounts = await library.listAccounts();
 
     try {
-      await library.provider?.request?.({
-        method: "wallet_switchEthereumChain",
-        params: [{ chainId: MVMChain.chainId }]
-      });
+      await wrapPromiseWithTimeout(
+        library.provider.request?.({
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId: MVMChain.chainId }]
+        })
+      );
     } catch (error: any) {
       if (error.code === 4902) {
-        await library.provider?.request?.({
-          method: "wallet_addEthereumChain",
-          params: [MVMChain]
-        });
+        await wrapPromiseWithTimeout(
+          library.provider?.request?.({
+            method: "wallet_addEthereumChain",
+            params: [MVMChain]
+          })
+        );
       }
     }
 

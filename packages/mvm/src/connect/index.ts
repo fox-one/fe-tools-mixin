@@ -2,7 +2,7 @@ import metamask from "./metamask";
 import walletconnect from "./walletconnect";
 import { Config } from "../index";
 
-export default function (
+export default async function (
   type: "metamask" | "walletconnect",
   config: Config
 ): Promise<any> {
