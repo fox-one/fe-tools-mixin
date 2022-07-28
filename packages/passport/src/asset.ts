@@ -11,7 +11,7 @@ export default function (state: State) {
     }
 
     if (isMVM(state.channel)) {
-      // TODO: complete this
+      return await state.mvm.getAsset(id);
     }
 
     return null;

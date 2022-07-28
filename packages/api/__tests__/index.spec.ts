@@ -101,8 +101,6 @@ describe("mixin sdk contents", () => {
       const oldPin = signEncryptedPin(pin, pin_token, session_id, private_key);
       const newPin = signEncryptedPin(pin, pin_token, session_id, private_key);
 
-      console.log(oldPin, newPin);
-
       await mixin.endpoints.updatePin(oldPin, newPin);
       done();
     } catch (error) {
@@ -119,8 +117,6 @@ describe("mixin sdk contents", () => {
       const { pin, pin_token, private_key, session_id } = Ed25519Session;
       const oldPin = signEncryptedPin(pin, pin_token, session_id, private_key);
       const newPin = signEncryptedPin(pin, pin_token, session_id, private_key);
-
-      console.log(oldPin, newPin);
 
       await mixin.endpoints.updatePin(oldPin, newPin);
       done();
