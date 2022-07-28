@@ -1,6 +1,6 @@
 {
   "name": "@foxone/mvm",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "description": "FoxONE Mixin Virtual Network tools",
   "main": "index.js",
   "bugs": "https://github.com/fox-one/fe-tools-mixin/issues",
@@ -8,7 +8,7 @@
   "author": "Fox.ONE",
   "license": "GPL 3.0",
   "dependencies": {
-    "@foxone/mixin-api": "^0.1.10",
+    "@foxone/mixin-api": "^0.1.11",
     "@metamask/detect-provider": "^1.2.0",
     "@walletconnect/web3-provider": "^1.7.8",
     "bignumber.js": "^9.0.1",
