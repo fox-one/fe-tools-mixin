@@ -94,9 +94,6 @@ export default class MVM extends EventEmitter {
   }
 
   clear() {
-    this.provider.off("accountsChanged");
-    this.provider.off("chainChanged");
-    this.provider.off("disconnect");
     this.library = null;
     this.provider = null;
     this.account = "";
