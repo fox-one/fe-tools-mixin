@@ -2,7 +2,7 @@ import type { ProxyUser, WithdrawPayload } from "./types";
 
 import { providers, utils } from "ethers";
 import MixinAPI from "@foxone/mixin-api";
-import { MVMChain, XinAssetId } from "./constants";
+import { MVMChain, NativeAssetId } from "./constants";
 import {
   fmtWithdrawAmount,
   fmtBalance,
@@ -104,12 +104,12 @@ export default class MVM extends EventEmitter {
 
   public async withdraw(payload: WithdrawPayload) {
     const { action, amount, asset_id } = payload;
-    const isXIN = asset_id === XinAssetId;
+    const isNative = asset_id === NativeAssetId;
     const extra = await bridge.getExtra(action);
     const to = await bridge.getProxyUserContract(this.account);
-    const value = fmtWithdrawAmount(String(amount), isXIN);
+    const value = fmtWithdrawAmount(String(amount), isNative);
 
-    if (isXIN) {
+    if (isNative) {
       await this.contractOpt?.execBridgeContract("release", [to, extra, value]);
     } else {
       await this.contractOpt?.execAssetContract(asset_id, "transferWithExtra", [
@@ -121,13 +121,13 @@ export default class MVM extends EventEmitter {
   }
 
   public async getAsset(assetId: string) {
-    const isXIN = assetId === XinAssetId;
-    const resp = isXIN
+    const isNative = assetId === NativeAssetId;
+    const resp = isNative
       ? ((await this.library?.getBalance(this.account)) ?? "0").toString()
       : await this.contractOpt?.execAssetContract(assetId, "balanceOf", [
           this.account
         ]);
-    const balance = fmtBalance(resp, isXIN);
+    const balance = fmtBalance(resp, isNative);
     const asset = await this.cache.getAsset(assetId);
 
     return { ...asset, balance };
@@ -150,9 +150,9 @@ export default class MVM extends EventEmitter {
         return { ...asset, balance };
       })
     );
-    const xin = await this.getAsset(XinAssetId);
+    const nativeAsset = await this.getAsset(NativeAssetId);
 
-    return [xin, ...assets].filter((x) => !!x);
+    return [nativeAsset, ...assets].filter((x) => !!x);
   }
 
   public getAuthToken() {

@@ -38,6 +38,7 @@ describe("test mvm", () => {
       const tokens = await mvm.getAssets();
 
       expect(Array.isArray(tokens)).toBe(true);
+      console.log(tokens);
       done();
     } catch (error) {
       done(error);

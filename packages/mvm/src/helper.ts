@@ -1,11 +1,11 @@
 import { utils } from "ethers";
 
-export function fmtWithdrawAmount(amount: string, isXIN = false) {
-  return utils.parseUnits(amount, isXIN ? 18 : 8).toString();
+export function fmtWithdrawAmount(amount: string, isNative = false) {
+  return utils.parseUnits(amount, isNative ? 18 : 8).toString();
 }
 
-export function fmtBalance(amount: string, isXIN = false) {
-  return utils.formatUnits(amount, isXIN ? 18 : 8).toString();
+export function fmtBalance(amount: string, isNative = false) {
+  return utils.formatUnits(amount, isNative ? 18 : 8).toString();
 }
 
 export function wrapPromiseWithTimeout<T>(
