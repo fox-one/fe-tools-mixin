@@ -26,7 +26,7 @@ export default class ContractOpt {
     if (record) return record.contract_address;
 
     const address = await this.registryContract.contracts(
-      "0x" + Buffer.from(String(parse(assetId))).toString("hex")
+      utils.hexlify(parse(assetId))
     );
 
     this.contractEntries.push({ asset_id: assetId, contract_address: address });
@@ -53,12 +53,19 @@ export default class ContractOpt {
     const address = await this.getContractAddressByAssetId(assetId);
     const contract = new ethers.Contract(address, AssetABI, this.signer);
 
-    return contract[method](...args);
+    return contract[method](...args, {
+      gasLimit: 1000000,
+      gasPrice: 50000000 // 0.01 Gwei
+    });
   }
 
-  execBridgeContract(method: string, args: string[]) {
-    const contract = new ethers.Contract(BridgeAddress, BridgeABI);
+  execBridgeContract(method: string, args: string[], value) {
+    const contract = new ethers.Contract(BridgeAddress, BridgeABI, this.signer);
 
-    return contract[method](...args);
+    return contract[method](...args, {
+      gasLimit: 1000000,
+      gasPrice: 50000000, // 0.01 Gwei
+      value
+    });
   }
 }

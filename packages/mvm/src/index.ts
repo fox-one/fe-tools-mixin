@@ -106,20 +106,19 @@ export default class MVM extends EventEmitter {
     const address = await this.contractOpt?.getContractAddressByAssetId(
       params.assetId
     );
+    const ethereum: any = window.ethereum;
 
-    await this.library?.provider.request?.({
+    await ethereum?.request?.({
       method: "wallet_watchAsset",
-      params: [
-        {
-          options: {
-            address,
-            decimals: 8,
-            image: params.image,
-            symbol: params.symbol
-          },
-          type: "ERC20"
-        }
-      ]
+      params: {
+        options: {
+          address,
+          decimals: 8,
+          image: params.image,
+          symbol: params.symbol
+        },
+        type: "ERC20"
+      }
     });
   }
 
@@ -131,7 +130,7 @@ export default class MVM extends EventEmitter {
     const value = fmtWithdrawAmount(String(amount), isNative);
 
     if (isNative) {
-      await this.contractOpt?.execBridgeContract("release", [to, extra, value]);
+      await this.contractOpt?.execBridgeContract("release", [to, extra], value);
     } else {
       await this.contractOpt?.execAssetContract(asset_id, "transferWithExtra", [
         to,

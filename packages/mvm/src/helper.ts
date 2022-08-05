@@ -10,7 +10,7 @@ export function fmtBalance(amount: string, isNative = false) {
 
 export function wrapPromiseWithTimeout<T>(
   promise: Promise<T> | undefined,
-  delay = 120000
+  delay = 30000
 ) {
   if (!promise) return;
 
