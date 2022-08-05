@@ -102,6 +102,27 @@ export default class MVM extends EventEmitter {
     this.connected = false;
   }
 
+  public async watchAsset(params) {
+    const address = await this.contractOpt?.getContractAddressByAssetId(
+      params.assetId
+    );
+
+    await this.library?.provider.request?.({
+      method: "wallet_watchAsset",
+      params: [
+        {
+          options: {
+            address,
+            decimals: 8,
+            image: params.image,
+            symbol: params.symbol
+          },
+          type: "ERC20"
+        }
+      ]
+    });
+  }
+
   public async withdraw(payload: WithdrawPayload) {
     const { action, amount, asset_id } = payload;
     const isNative = asset_id === NativeAssetId;

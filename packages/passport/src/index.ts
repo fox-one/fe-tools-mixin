@@ -8,6 +8,7 @@ import createAssetsAction from "./assets";
 import createAssetAction from "./asset";
 import createPaymentAction from "./payment";
 import createSyncAction from "./sync";
+import createHelper from "./helper";
 
 export interface PassportOptions {
   origin: string;
@@ -26,6 +27,7 @@ export type PassportMethods = {
   mvm: MVM;
   payment: ReturnType<typeof createPaymentAction>;
   sync: ReturnType<typeof createSyncAction>;
+  helper: ReturnType<typeof createHelper>;
 };
 
 export type State = {
@@ -73,6 +75,7 @@ function install(Vue: VueConstructor, options: PassportOptions) {
     fennec: state.fennec,
     getAsset: createAssetAction(state),
     getAssets: createAssetsAction(state),
+    helper: createHelper(state),
     mvm: state.mvm,
     payment: createPaymentAction(Vue, state),
     sync: createSyncAction(options, state)
