@@ -57,14 +57,12 @@ export default class MVM extends EventEmitter {
         })
       );
     } catch (error: any) {
-      if (error.code === 4902) {
-        await wrapPromiseWithTimeout(
-          library.provider?.request?.({
-            method: "wallet_addEthereumChain",
-            params: [MVMChain]
-          })
-        );
-      }
+      await wrapPromiseWithTimeout(
+        library.provider?.request?.({
+          method: "wallet_addEthereumChain",
+          params: [MVMChain]
+        })
+      );
     }
 
     const account = accounts[0];
