@@ -41,12 +41,19 @@ export default class ContractOpt {
 
     if (record) return record.asset_id;
 
-    const resp = await this.registryContract.assets(address);
-    const assetId = stringify(utils.arrayify(resp));
+    try {
+      const resp = await this.registryContract.assets(address);
+      const assetId = stringify(utils.arrayify(resp));
 
-    this.contractEntries.push({ asset_id: assetId, contract_address: address });
+      this.contractEntries.push({
+        asset_id: assetId,
+        contract_address: address
+      });
 
-    return assetId;
+      return assetId;
+    } catch (error) {
+      return "";
+    }
   }
 
   async execAssetContract(assetId: string, method: string, args: string[]) {
@@ -54,8 +61,7 @@ export default class ContractOpt {
     const contract = new ethers.Contract(address, AssetABI, this.signer);
 
     return contract[method](...args, {
-      gasLimit: 1000000,
-      gasPrice: 50000000 // 0.01 Gwei
+      gasPrice: 10000000 // 0.01 Gwei
     });
   }
 
@@ -63,8 +69,7 @@ export default class ContractOpt {
     const contract = new ethers.Contract(BridgeAddress, BridgeABI, this.signer);
 
     return contract[method](...args, {
-      gasLimit: 1000000,
-      gasPrice: 50000000, // 0.01 Gwei
+      gasPrice: 10000000, // 0.01 Gwei
       value
     });
   }

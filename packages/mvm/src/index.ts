@@ -61,7 +61,7 @@ export default class MVM extends EventEmitter {
       } catch (error: any) {
         if (
           error.code === 4902 ||
-          error.message.includes("Unrecognized chain ID")
+          error?.message?.includes("Unrecognized chain ID")
         ) {
           await wrapPromiseWithTimeout(
             library.provider?.request?.({

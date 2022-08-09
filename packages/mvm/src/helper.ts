@@ -18,7 +18,7 @@ export function wrapPromiseWithTimeout<T>(
     promise,
     new Promise((resolve, reject) => {
       setTimeout(() => {
-        reject("Operation Timeout");
+        reject(new Error("Operation Timeout"));
       }, delay);
     })
   ]);
