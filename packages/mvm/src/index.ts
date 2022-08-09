@@ -48,21 +48,29 @@ export default class MVM extends EventEmitter {
     const provider = await connect(type, this.config);
     const library = new providers.Web3Provider(provider, "any");
     const accounts = await library.listAccounts();
+    const network = await library.getNetwork();
 
-    try {
-      await wrapPromiseWithTimeout(
-        library.provider.request?.({
-          method: "wallet_switchEthereumChain",
-          params: [{ chainId: MVMChain.chainId }]
-        })
-      );
-    } catch (error: any) {
-      await wrapPromiseWithTimeout(
-        library.provider?.request?.({
-          method: "wallet_addEthereumChain",
-          params: [MVMChain]
-        })
-      );
+    if (network.chainId !== Number(MVMChain.chainId)) {
+      try {
+        await wrapPromiseWithTimeout(
+          library.provider.request?.({
+            method: "wallet_switchEthereumChain",
+            params: [{ chainId: MVMChain.chainId }]
+          })
+        );
+      } catch (error: any) {
+        if (
+          error.code === 4902 ||
+          error.message.includes("Unrecognized chain ID")
+        ) {
+          await wrapPromiseWithTimeout(
+            library.provider?.request?.({
+              method: "wallet_addEthereumChain",
+              params: [MVMChain]
+            })
+          );
+        }
+      }
     }
 
     const account = accounts[0];
@@ -100,6 +108,10 @@ export default class MVM extends EventEmitter {
     this.connected = false;
   }
 
+  public getNetwork() {
+    return this.library?.getNetwork();
+  }
+
   public async watchAsset(params) {
     const address = await this.contractOpt?.getContractAddressByAssetId(
       params.assetId
@@ -121,6 +133,12 @@ export default class MVM extends EventEmitter {
   }
 
   public async withdraw(payload: WithdrawPayload) {
+    const network = await this.getNetwork();
+
+    if (network?.chainId !== Number(MVMChain.chainId)) {
+      throw new Error("Current chain is not Mixin Virtual Machine");
+    }
+
     const { action, amount, asset_id } = payload;
     const isNative = asset_id === NativeAssetId;
     const extra = await bridge.getExtra(action);

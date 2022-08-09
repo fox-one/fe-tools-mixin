@@ -1,6 +1,7 @@
 import type { VueConstructor } from "vue/types/umd";
 
 import { genPaymentUrl } from "@foxone/utils/mixin";
+import { State } from ".";
 
 export interface PaymentPayload {
   // transfer params
@@ -22,7 +23,7 @@ export interface PaymentPayload {
   checker?: () => Promise<boolean>;
 }
 
-export default function (Vue: VueConstructor, state) {
+export default function (Vue: VueConstructor, state: State) {
   return async (payload: PaymentPayload) => {
     const code = payload.code ?? "";
     const multisig = payload.multisig ?? false;
