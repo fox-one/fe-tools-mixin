@@ -116,9 +116,8 @@ export default class MVM extends EventEmitter {
     const address = await this.contractOpt?.getContractAddressByAssetId(
       params.assetId
     );
-    const ethereum: any = window.ethereum;
 
-    await ethereum?.request?.({
+    await this.library?.provider.request?.({
       method: "wallet_watchAsset",
       params: {
         options: {
@@ -128,7 +127,7 @@ export default class MVM extends EventEmitter {
           symbol: params.symbol
         },
         type: "ERC20"
-      }
+      } as any
     });
   }
 
