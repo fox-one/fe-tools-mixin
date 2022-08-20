@@ -20,7 +20,7 @@ export interface Config {
 }
 
 export default class MVM extends EventEmitter {
-  private user: ProxyUser | null = null;
+  public user: ProxyUser | null = null;
 
   private contractOpt: ContractOpt | null = null;
 
