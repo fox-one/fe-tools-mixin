@@ -29,19 +29,19 @@ describe("test mvm", () => {
     }
   });
 
-  test("get token list", async (done) => {
-    testingUtils.mockRequestAccounts([account]);
+  // test("get token list", async (done) => {
+  //   testingUtils.mockRequestAccounts([account]);
 
-    try {
-      await mvm.connenct("metamask");
+  //   try {
+  //     await mvm.connenct("metamask");
 
-      const tokens = await mvm.getAssets();
+  //     const tokens = await mvm.getAssets();
 
-      expect(Array.isArray(tokens)).toBe(true);
-      console.log(tokens);
-      done();
-    } catch (error) {
-      done(error);
-    }
-  }, 100000);
+  //     expect(Array.isArray(tokens)).toBe(true);
+  //     console.log(tokens);
+  //     done();
+  //   } catch (error) {
+  //     done(error);
+  //   }
+  // }, 100000);
 });

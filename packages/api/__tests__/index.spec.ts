@@ -46,37 +46,37 @@ describe("mixin sdk contents", () => {
     }
   });
 
-  test("endponts should work properly with ed25519 session", async (done) => {
-    const { client_id, private_key, session_id } = Ed25519Session;
-    const provider = new providers.HttpProvider();
+  // test("endponts should work properly with ed25519 session", async (done) => {
+  //   const { client_id, private_key, session_id } = Ed25519Session;
+  //   const provider = new providers.HttpProvider();
 
-    provider.instance.interceptors.request.use((config) => {
-      const url = axios.getUri(config);
-      const token = encrypts.signAuthenticationToken(
-        client_id,
-        session_id,
-        private_key,
-        config.method ?? "",
-        url,
-        config.data ?? ""
-      );
+  //   provider.instance.interceptors.request.use((config) => {
+  //     const url = axios.getUri(config);
+  //     const token = encrypts.signAuthenticationToken(
+  //       client_id,
+  //       session_id,
+  //       private_key,
+  //       config.method ?? "",
+  //       url,
+  //       config.data ?? ""
+  //     );
 
-      config.headers = { ...config.headers, Authorization: `Bearer ${token}` };
+  //     config.headers = { ...config.headers, Authorization: `Bearer ${token}` };
 
-      return config;
-    });
+  //     return config;
+  //   });
 
-    const endpoints = createEndpoints(provider);
+  //   const endpoints = createEndpoints(provider);
 
-    try {
-      const res = await endpoints.getAssets();
+  //   try {
+  //     const res = await endpoints.getAssets();
 
-      expect(Array.isArray(res)).toBe(true);
-      done();
-    } catch (error) {
-      done(error);
-    }
-  });
+  //     expect(Array.isArray(res)).toBe(true);
+  //     done();
+  //   } catch (error) {
+  //     done(error);
+  //   }
+  // });
 
   test("mixin api should work properly", async (done) => {
     const mixin = new Mixin();
