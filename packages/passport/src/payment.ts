@@ -5,8 +5,8 @@ import { State } from ".";
 
 export interface PaymentPayload {
   // transfer params
-  assetId?: string;
-  amount?: string;
+  assetId: string;
+  amount: string;
   recipient?: string;
   traceId?: string;
   memo?: string;
@@ -15,11 +15,6 @@ export interface PaymentPayload {
   multisig?: boolean;
   // common params
   hideCheckingModal?: boolean;
-  info: {
-    symbol: string;
-    logo: string;
-    amount: string;
-  };
   checker?: () => Promise<boolean>;
 }
 

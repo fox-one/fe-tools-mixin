@@ -5,6 +5,10 @@ export default async function (infuraId: string) {
   //  Create WalletConnect Provider
   const provider = new WalletConnectProvider({
     infuraId,
+    qrcodeModalOptions: {
+      desktopLinks: ["metamask", "imToken", "TokenPocket"],
+      mobileLinks: ["metamask", "imToken", "TokenPocket"]
+    },
     rpc: {
       [Number(MVMChain.chainId)]: MVMChain.rpcUrls[0]
     }
