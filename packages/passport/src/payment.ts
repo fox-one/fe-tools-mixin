@@ -5,8 +5,8 @@ import { State } from ".";
 
 export interface PaymentPayload {
   // transfer params
-  assetId: string;
-  amount: string;
+  assetId?: string;
+  amount?: string;
   recipient?: string;
   traceId?: string;
   memo?: string;
