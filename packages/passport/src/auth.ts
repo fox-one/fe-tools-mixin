@@ -12,7 +12,9 @@ export default function (
   const connectFennec = async () => {
     await state.fennec.connect(options.origin);
     state.token =
-      (await state.fennec.ctx?.wallet.signToken({ payload: {} })) ?? "";
+      (await state.fennec.ctx?.wallet.signToken({
+        payload: options.JWTPayload || {}
+      })) ?? "";
   };
 
   const connectMVM = async (type) => {

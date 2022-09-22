@@ -13,6 +13,7 @@ import createHelper from "./helper";
 export interface PassportOptions {
   origin: string;
   config: Config;
+  JWTPayload?: any;
   onDisconnect?: () => void;
   getTokenByCode?: (code: string) => Promise<string>;
 }
