@@ -23,14 +23,28 @@ export default function (Vue: VueConstructor, state: State) {
     const code = payload.code ?? "";
     const multisig = payload.multisig ?? false;
 
-    const asset_id = payload?.assetId ?? "";
+    let asset_id = payload?.assetId ?? "";
+    let amount = payload?.amount ?? "";
+    let memo = payload?.memo ?? "";
+
+    let receivers = [];
+    let threshold = 0;
+
     const opponent_id = payload?.recipient ?? "";
-    const amount = payload?.amount ?? "";
     const trace_id = payload?.traceId ?? "";
-    const memo = payload?.memo ?? "";
     const scheme = multisig
       ? `mixin://codes/${code}`
       : genPaymentUrl(payload as any);
+
+    if (multisig) {
+      const resp: any = await state.mixin.endpoints.codes(code);
+
+      asset_id = resp?.asset_id;
+      amount = resp?.amount;
+      memo = resp?.memo;
+      receivers = resp?.receivers;
+      threshold = resp?.threshold;
+    }
 
     const actions = {
       fennec: async () => {
@@ -51,13 +65,6 @@ export default function (Vue: VueConstructor, state: State) {
       },
       mvm: async () => {
         if (multisig) {
-          const resp: any = await state.mixin.endpoints.codes(code);
-          const receivers = resp?.receivers;
-          const threshold = resp?.threshold;
-          const memo = resp?.memo;
-          const amount = resp?.amount;
-          const asset_id = resp?.asset_id;
-
           await state.mvm.withdraw({
             action: { extra: memo, receivers, threshold },
             amount,
@@ -76,6 +83,8 @@ export default function (Vue: VueConstructor, state: State) {
     await Vue.prototype.$uikit.payment.show({
       ...payload,
       actions,
+      amount,
+      assetId: asset_id,
       channel: state.channel,
       scheme
     });
