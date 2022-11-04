@@ -2043,7 +2043,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@foxone/mixin-api@0.1.25, @foxone/mixin-api@^0.1.25, @foxone/mixin-api@workspace:packages/api":
+"@foxone/mixin-api@0.1.26, @foxone/mixin-api@^0.1.26, @foxone/mixin-api@workspace:packages/api":
   version: 0.0.0-use.local
   resolution: "@foxone/mixin-api@workspace:packages/api"
   dependencies:
@@ -2061,18 +2061,18 @@ __metadata:
   resolution: "@foxone/mixin-passport@workspace:packages/passport"
   dependencies:
     "@foxone/fennec-dapp": ^0.5.4
-    "@foxone/mixin-api": 0.1.25
-    "@foxone/mvm": 0.1.25
+    "@foxone/mixin-api": 0.1.26
+    "@foxone/mvm": 0.1.26
     "@foxone/utils": ^0.2.6
     vue: ^2.6.12
   languageName: unknown
   linkType: soft
 
-"@foxone/mvm@0.1.25, @foxone/mvm@workspace:packages/mvm":
+"@foxone/mvm@0.1.26, @foxone/mvm@workspace:packages/mvm":
   version: 0.0.0-use.local
   resolution: "@foxone/mvm@workspace:packages/mvm"
   dependencies:
-    "@foxone/mixin-api": ^0.1.25
+    "@foxone/mixin-api": ^0.1.26
     "@metamask/detect-provider": ^1.2.0
     "@walletconnect/web3-provider": ^1.7.8
     bignumber.js: ^9.0.1
