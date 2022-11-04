@@ -55,6 +55,7 @@ export default function (
       Vue.prototype.$uikit.auth.show({
         checkFennec: () => state.fennec.isAvailable(),
         checkMetamask: () => Boolean(window?.ethereum?.isMetaMask),
+        checkOnekey: () => Boolean((window as any).$onekey),
         handleAuth: async (data) => {
           try {
             await handleAuth(data, resolve, reject);

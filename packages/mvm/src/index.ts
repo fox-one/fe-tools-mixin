@@ -44,7 +44,7 @@ export default class MVM extends EventEmitter {
     this.cache = new Cache(this.api);
   }
 
-  public async connenct(type: "metamask" | "walletconnect") {
+  public async connenct(type: "metamask" | "walletconnect" | "onekey") {
     const provider = await connect(type, this.config);
     const library = new providers.Web3Provider(provider, "any");
     const accounts = await library.listAccounts();

@@ -18,7 +18,13 @@ export interface PassportOptions {
   getTokenByCode?: (code: string) => Promise<string>;
 }
 
-export type Channel = "fennec" | "mixin" | "metamask" | "walletconnect" | "";
+export type Channel =
+  | "fennec"
+  | "mixin"
+  | "metamask"
+  | "walletconnect"
+  | "onekey"
+  | "";
 
 export type PassportMethods = {
   auth: ReturnType<typeof createAuthAction>;
@@ -46,7 +52,11 @@ declare module "vue/types/vue" {
 }
 
 export function isMVM(channel: Channel) {
-  return channel === "metamask" || channel === "walletconnect";
+  return (
+    channel === "metamask" ||
+    channel === "walletconnect" ||
+    channel === "onekey"
+  );
 }
 
 function install(Vue: VueConstructor, options: PassportOptions) {
