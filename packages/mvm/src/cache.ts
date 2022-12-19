@@ -1,5 +1,6 @@
-import { Asset } from "@foxone/mixin-api/types";
 import MixinAPI from "@foxone/mixin-api";
+
+import type { Asset } from "@foxone/mixin-api/types";
 
 export default class Cache {
   assets: Record<string, { data: Asset; time: number }> = {};

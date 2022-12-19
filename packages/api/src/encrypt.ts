@@ -1,8 +1,8 @@
-import asn1 from "node-forge/lib/asn1";
-import pki from "node-forge/lib/pki";
-import util from "node-forge/lib/util";
-import md from "node-forge/lib/md";
-import ed25519 from "node-forge/lib/ed25519";
+import asn1 from "node-forge/lib/asn1.js";
+import pki from "node-forge/lib/pki.js";
+import util from "node-forge/lib/util.js";
+import md from "node-forge/lib/md.js";
+import ed25519 from "node-forge/lib/ed25519.js";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import { Uint64LE } from "int64-buffer";

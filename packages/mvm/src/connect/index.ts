@@ -1,11 +1,10 @@
 import metamask from "./metamask";
 import walletconnect from "./walletconnect";
 import onekey from "./onekey";
-import { Config } from "../index";
 
 export default async function (
   type: "metamask" | "walletconnect" | "onekey",
-  config: Config
+  config
 ): Promise<any> {
   if (type === "metamask") {
     return metamask();

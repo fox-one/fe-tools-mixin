@@ -15,10 +15,6 @@ import bridge from "./bridge";
 import connect from "./connect";
 import EventEmitter from "events";
 
-export interface Config {
-  infuraId: string;
-}
-
 export default class MVM extends EventEmitter {
   public user: ProxyUser | null = null;
 
@@ -34,11 +30,11 @@ export default class MVM extends EventEmitter {
 
   private api = new MixinAPI();
 
-  private config: Config;
+  private config;
 
   private cache: Cache;
 
-  constructor(config: Config) {
+  constructor(config) {
     super();
     this.config = config;
     this.cache = new Cache(this.api);

@@ -2,7 +2,7 @@ import { VueConstructor } from "vue/types/umd";
 
 import Fennec from "@foxone/fennec-dapp";
 import MixinAPI from "@foxone/mixin-api";
-import MVM, { Config } from "@foxone/mvm";
+import MVM from "@foxone/mvm";
 import createAuthAction from "./auth";
 import createAssetsAction from "./assets";
 import createAssetAction from "./asset";
@@ -12,7 +12,7 @@ import createHelper from "./helper";
 
 export interface PassportOptions {
   origin: string;
-  config: Config;
+  config: any;
   JWTPayload?: any;
   onDisconnect?: () => void;
   getTokenByCode?: (code: string) => Promise<string>;
