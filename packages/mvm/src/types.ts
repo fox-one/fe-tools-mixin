@@ -1,3 +1,8 @@
+export interface MVMConfig {
+  chainId?: boolean;
+  infuraId: string;
+}
+
 export interface ProxyUser {
   contract: string;
   created_at: string;

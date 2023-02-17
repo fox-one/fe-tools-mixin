@@ -1,4 +1,4 @@
-import type { ProxyUser, WithdrawPayload } from "./types";
+import type { ProxyUser, WithdrawPayload, MVMConfig } from "./types";
 
 import { providers, utils } from "ethers";
 import MixinAPI from "@foxone/mixin-api";
@@ -8,12 +8,12 @@ import {
   fmtBalance,
   wrapPromiseWithTimeout
 } from "./helper";
-import { signAuthenticationToken } from "@foxone/mixin-api/encrypt";
 import ContractOpt from "./contract";
 import Cache from "./cache";
 import bridge from "./bridge";
 import connect from "./connect";
 import EventEmitter from "events";
+import { SiweMessage } from "siwe";
 
 export default class MVM extends EventEmitter {
   public user: ProxyUser | null = null;
@@ -30,11 +30,11 @@ export default class MVM extends EventEmitter {
 
   private api = new MixinAPI();
 
-  private config;
+  private config: MVMConfig;
 
   private cache: Cache;
 
-  constructor(config) {
+  constructor(config: MVMConfig) {
     super();
     this.config = config;
     this.cache = new Cache(this.api);
@@ -46,18 +46,21 @@ export default class MVM extends EventEmitter {
     const accounts = await library.listAccounts();
     const network = await library.getNetwork();
 
-    if (network.chainId !== Number(MVMChain.chainId)) {
+    const chainId = this.config.chainId || MVMChain.chainId;
+
+    if (network.chainId !== Number(chainId)) {
       try {
         await wrapPromiseWithTimeout(
           library.provider.request?.({
             method: "wallet_switchEthereumChain",
-            params: [{ chainId: MVMChain.chainId }]
+            params: [{ chainId }]
           })
         );
       } catch (error: any) {
         if (
-          error.code === 4902 ||
-          error?.message?.includes("Unrecognized chain ID")
+          (error.code === 4902 ||
+            error?.message?.includes("Unrecognized chain ID")) &&
+          chainId === MVMChain.chainId
         ) {
           await wrapPromiseWithTimeout(
             library.provider?.request?.({
@@ -168,7 +171,7 @@ export default class MVM extends EventEmitter {
     const tokens = await bridge.getTokenList(this.account);
 
     const assets = await Promise.all(
-      tokens.map(async (token) => {
+      tokens?.map(async (token) => {
         const assetId = await this.contractOpt?.getAssetIdByContractAddress(
           token.contractAddress
         );
@@ -186,22 +189,21 @@ export default class MVM extends EventEmitter {
     return [nativeAsset, ...assets].filter((x) => !!x);
   }
 
-  public getAuthToken() {
-    return this.signToken({ data: "", method: "GET", url: "/me" });
-  }
+  public async signMessage(params: Partial<SiweMessage>) {
+    const domain = window.location.host;
+    const origin = window.location.origin;
 
-  private signToken({ data, method, url }) {
-    if (!this.user) {
-      throw new Error("No proxy user found");
-    }
+    const message = new SiweMessage({
+      address: this.account,
+      chainId: 1,
+      domain,
+      uri: origin,
+      version: "1",
+      ...params
+    });
+    const signer = this.library?.getSigner();
+    const signature = await signer?.signMessage(message.prepareMessage());
 
-    return signAuthenticationToken(
-      this.user.key.client_id,
-      this.user.key.session_id,
-      this.user.key.private_key,
-      method,
-      url,
-      data
-    );
+    return { message, signature };
   }
 }
