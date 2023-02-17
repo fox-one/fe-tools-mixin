@@ -201,9 +201,10 @@ export default class MVM extends EventEmitter {
       version: "1",
       ...params
     });
+    const text = message.prepareMessage();
     const signer = this.library?.getSigner();
-    const signature = await signer?.signMessage(message.prepareMessage());
+    const signature = await signer?.signMessage(text);
 
-    return { message, signature };
+    return { message: text, signature };
   }
 }
