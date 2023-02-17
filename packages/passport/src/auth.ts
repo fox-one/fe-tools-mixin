@@ -1,7 +1,7 @@
 import type { PassportOptions } from "./index";
 import type { VueConstructor } from "vue/types/umd";
 
-import { isMVM, State } from "./index";
+import { isMVM, State, SignMessageParams } from "./index";
 import { AuthData } from "./sync";
 
 export default function (
@@ -17,9 +17,24 @@ export default function (
       })) ?? "";
   };
 
-  const connectMVM = async (type) => {
+  const connectMVM = async (type, reject) => {
     await state.mvm.connenct(type);
-    state.token = state.mvm.getAuthToken();
+
+    let params: SignMessageParams = {};
+
+    if (options.beforeSignMessage) {
+      params = await options.beforeSignMessage();
+    }
+
+    let resp: any = await state.mvm.signMessage(params);
+
+    if (options.afterSignMessage) {
+      resp = await options.afterSignMessage(resp);
+    } else {
+      reject("Need afterSignMessage hook to process signed message to token");
+    }
+
+    return resp;
   };
 
   const handleAuth = async (data, resolve, reject) => {
@@ -31,7 +46,7 @@ export default function (
     }
 
     if (isMVM(state.channel)) {
-      await connectMVM(state.channel);
+      await connectMVM(state.channel, reject);
       resolve({ channel: state.channel, token: state.token });
     }
 

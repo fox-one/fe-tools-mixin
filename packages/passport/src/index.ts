@@ -10,10 +10,26 @@ import createPaymentAction from "./payment";
 import createSyncAction from "./sync";
 import createHelper from "./helper";
 
+export interface SignMessageParams {
+  domain?: string;
+  statement?: string;
+  uri?: string;
+  version?: string;
+  chainId?: number;
+  expirationTime?: string;
+  notBefore?: string;
+  resources?: Array<string>;
+}
+
 export interface PassportOptions {
   origin: string;
   config: any;
   JWTPayload?: any;
+  beforeSignMessage?: () => Promise<SignMessageParams>;
+  afterSignMessage?: (params: {
+    message: string;
+    signature: string;
+  }) => Promise<string>;
   onDisconnect?: () => void;
   getTokenByCode?: (code: string) => Promise<string>;
 }
