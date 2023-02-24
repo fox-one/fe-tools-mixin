@@ -6,7 +6,7 @@
   "bugs": "https://github.com/fox-one/fe-tools-mixin/issues",
   "homepage": "https://github.com/fox-one/fe-tools-mixin",
   "dependencies": {
-    "axios": "^0.21.1",
+    "axios": "^0.21.2",
     "browser-passworder": "^2.0.3",
     "int64-buffer": "^1.0.0",
     "jsonwebtoken": "^8.5.1",
