@@ -3,6 +3,7 @@ import type { ProxyUser, WithdrawPayload, MVMConfig } from "./types";
 import { providers, utils } from "ethers";
 import MixinAPI from "@foxone/mixin-api";
 import { MVMChain, NativeAssetId } from "./constants";
+import { signAuthenticationToken } from "@foxone/mixin-api/encrypt";
 import {
   fmtWithdrawAmount,
   fmtBalance,
@@ -186,7 +187,7 @@ export default class MVM extends EventEmitter {
     );
     const nativeAsset = await this.getAsset(NativeAssetId);
 
-    return [nativeAsset, ...assets].filter((x) => !!x);
+    return [nativeAsset, ...(assets || [])].filter((x) => !!x);
   }
 
   public async signMessage(params: Partial<SiweMessage>) {
@@ -206,5 +207,24 @@ export default class MVM extends EventEmitter {
     const signature = await signer?.signMessage(text);
 
     return { message: text, signature };
+  }
+
+  public getAuthToken() {
+    return this.signToken({ data: "", method: "GET", url: "/me" });
+  }
+
+  private signToken({ data, method, url }) {
+    if (!this.user) {
+      throw new Error("No proxy user found");
+    }
+
+    return signAuthenticationToken(
+      this.user.key.client_id,
+      this.user.key.session_id,
+      this.user.key.private_key,
+      method,
+      url,
+      data
+    );
   }
 }
