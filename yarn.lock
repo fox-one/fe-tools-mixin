@@ -3185,7 +3185,7 @@ __metadata:
     siwe: ^1.1.6
     ts-loader: ^9.4.2
     uuid: ^8.3.2
-    webpack: ^5.75.0
+    webpack: ^5.76.0
     webpack-bundle-analyzer: ^4.7.0
     webpack-cli: ^5.0.1
   languageName: unknown
@@ -16463,9 +16463,9 @@ typescript@^4.2.4:
   languageName: node
   linkType: hard
 
-"webpack@npm:^5.75.0":
-  version: 5.75.0
-  resolution: "webpack@npm:5.75.0"
+"webpack@npm:^5.76.0":
+  version: 5.76.1
+  resolution: "webpack@npm:5.76.1"
   dependencies:
     "@types/eslint-scope": ^3.7.3
     "@types/estree": ^0.0.51
@@ -16496,7 +16496,7 @@ typescript@^4.2.4:
       optional: true
   bin:
     webpack: bin/webpack.js
-  checksum: 15f4767d54f270ab4e03b116bf9eff18db8a04d8bfdf8913a7f0df35361312b5e631f2b228012acba4a20200b27775818bc3f667cb70acb6ba43dcb050588770
+  checksum: bd96a7d382c7ddaeef611429b6937e7462cedeb62e048d2d04077c9c0874a75e5990183ab3c5b440432842dd9b7668283884de7a40c01f5c752ed499687d22fd
   languageName: node
   linkType: hard
 
