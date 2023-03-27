@@ -169,17 +169,10 @@ export default class MVM extends EventEmitter {
   }
 
   public async getAssets() {
-    const tokens = await bridge.getTokenList(this.account);
-
+    const tokens = (await bridge.getTokenList(this.account)) || [];
     const assets = await Promise.all(
       tokens?.map(async (token) => {
-        const assetId = await this.contractOpt?.getAssetIdByContractAddress(
-          token.contractAddress
-        );
-
-        if (!assetId) return null;
-
-        const asset = await this.cache.getAsset(assetId);
+        const asset = await this.cache.getAsset(token.mixinAssetId);
         const balance = fmtBalance(token.balance);
 
         return { ...asset, balance };

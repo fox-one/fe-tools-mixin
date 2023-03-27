@@ -10,8 +10,6 @@
   "types": "index.d.ts",
   "dependencies": {
     "@foxone/fennec-dapp": "^0.5.4",
-    "@foxone/mixin-api": "0.1.30",
-    "@foxone/mvm": "0.1.30",
     "@foxone/utils": "^0.2.6"
   },
   "devDependencies": {

@@ -35,4 +35,5 @@ export interface Token {
   name: string;
   symbol: string;
   type: string;
+  mixinAssetId: string;
 }

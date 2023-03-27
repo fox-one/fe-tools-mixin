@@ -3,7 +3,7 @@ import { isMVM, State } from "./index";
 export default function (state: State) {
   return async () => {
     if (state.channel === "mixin") {
-      return await state.mixin.endpoints.getAssets();
+      return await state.mixin.getAssets();
     }
 
     if (state.channel === "fennec") {
@@ -11,7 +11,7 @@ export default function (state: State) {
     }
 
     if (isMVM(state.channel)) {
-      return await state.mvm.getAssets();
+      return await state.mvm?.getAssets();
     }
 
     return [];

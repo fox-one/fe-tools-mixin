@@ -11,58 +11,105 @@ export default function (
 ) {
   const connectFennec = async () => {
     await state.fennec.connect(options.origin);
-    state.token =
+
+    const mixinToken =
       (await state.fennec.ctx?.wallet.signToken({
         payload: options.JWTPayload || {}
-      })) ?? "";
+      })) || "";
+
+    if (options.customizeToken) {
+      const resp = await options.hooks?.onDistributeToken?.({
+        token: mixinToken,
+        type: "mixin_token"
+      });
+
+      state.token = resp?.token ?? "";
+    } else {
+      state.token = mixinToken;
+    }
   };
 
   const connectMVM = async (type, reject) => {
-    await state.mvm.connenct(type);
+    await state.mvm?.connenct(type);
 
-    let params: SignMessageParams = {};
+    if (options.signMessage) {
+      let params: SignMessageParams = {};
 
-    if (options.beforeSignMessage) {
-      params = await options.beforeSignMessage();
-    }
+      if (options.hooks?.beforeSignMessage) {
+        params = await options.hooks.beforeSignMessage();
+      }
 
-    let resp: any = await state.mvm.signMessage(params);
+      const signedData: any = await state.mvm?.signMessage(params);
 
-    if (options.afterSignMessage) {
-      resp = await options.afterSignMessage(resp);
+      if (options.hooks?.onDistributeToken) {
+        const resp = await options.hooks?.onDistributeToken?.({
+          message: signedData?.message ?? "",
+          signature: signedData?.signature ?? "",
+          type: "signed_message"
+        });
+
+        state.token = resp?.token ?? "";
+      } else {
+        reject(
+          "Need onDistributeToken hook to process signed message to token"
+        );
+      }
     } else {
-      reject("Need afterSignMessage hook to process signed message to token");
-    }
+      const mixinToken = state.mvm?.getAuthToken() ?? "";
 
-    return resp;
+      if (options.customizeToken) {
+        const resp = await options.hooks?.onDistributeToken?.({
+          token: mixinToken,
+          type: "mixin_token"
+        });
+
+        state.token = resp?.token ?? "";
+      } else {
+        state.token = mixinToken;
+      }
+    }
+  };
+
+  const connectMixin = async (data, reject) => {
+    if (data.token) {
+      const mixinToken = data.token;
+
+      if (options.customizeToken) {
+        const resp = await options.hooks?.onDistributeToken?.({
+          token: mixinToken,
+          type: "mixin_token"
+        });
+
+        state.token = resp?.token ?? "";
+        state.mixin_token = mixinToken;
+      } else {
+        state.token = mixinToken;
+      }
+    } else {
+      if (options.hooks?.onDistributeToken) {
+        const resp = await options.hooks.onDistributeToken({
+          code: data.code,
+          type: "mixin_code"
+        });
+
+        state.token = resp.token;
+        state.mixin_token = resp.mixin_token;
+      } else {
+        reject("Need onDistributeToken hook to process code to tokens");
+      }
+    }
   };
 
   const handleAuth = async (data, resolve, reject) => {
     state.channel = data.type;
 
-    if (state.channel === "fennec") {
-      await connectFennec();
-      resolve({ channel: state.channel, token: state.token });
-    }
+    if (state.channel === "fennec") await connectFennec();
 
-    if (isMVM(state.channel)) {
-      await connectMVM(state.channel, reject);
-      resolve({ channel: state.channel, token: state.token });
-    }
+    if (isMVM(state.channel)) await connectMVM(state.channel, reject);
 
-    if (state.channel === "mixin") {
-      if (data.token) {
-        state.token = data.token;
-      } else {
-        if (!options.getTokenByCode) {
-          return reject("No auth actions provided");
-        }
+    if (state.channel === "mixin") await connectMixin(data, reject);
 
-        state.token = await options.getTokenByCode(data.code);
-      }
-
-      resolve({ channel: state.channel, token: state.token });
-    }
+    resolve({ channel: state.channel, token: state.token });
   };
 
   return (): Promise<AuthData> => {

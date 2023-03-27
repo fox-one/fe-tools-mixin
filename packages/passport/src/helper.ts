@@ -10,7 +10,7 @@ export default function (state: State) {
       symbol: string;
     }) => {
       if (isMVM(state.channel)) {
-        state.mvm.watchAsset(params);
+        state.mvm?.watchAsset(params);
       }
     }
   };

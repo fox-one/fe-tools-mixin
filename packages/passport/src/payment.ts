@@ -37,7 +37,7 @@ export default function (Vue: VueConstructor, state: State) {
       : genPaymentUrl(payload as any);
 
     if (multisig) {
-      const resp: any = await state.mixin.endpoints.codes(code);
+      const resp: any = await state.mixin.codes(code);
 
       asset_id = resp?.asset_id;
       amount = resp?.amount;
@@ -65,13 +65,13 @@ export default function (Vue: VueConstructor, state: State) {
       },
       mvm: async () => {
         if (multisig) {
-          await state.mvm.withdraw({
+          await state.mvm?.withdraw({
             action: { extra: memo, receivers, threshold },
             amount,
             asset_id
           });
         } else {
-          await state.mvm.withdraw({
+          await state.mvm?.withdraw({
             action: { extra: memo, receivers: [opponent_id], threshold: 1 },
             amount,
             asset_id
