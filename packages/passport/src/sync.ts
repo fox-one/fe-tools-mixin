@@ -15,7 +15,7 @@ export default function (options, state) {
     if (state.channel === "fennec") {
       await state.fennec.connect(options.origin);
 
-      if (options.refreshToken) {
+      if (!options.customizeToken) {
         state.token =
           (await state.fennec.ctx.wallet.signToken({ payload: {} })) ?? "";
       }
@@ -24,7 +24,7 @@ export default function (options, state) {
     if (isMVM(state.channel)) {
       await state.mvm.connenct(state.channel);
 
-      if (options.refreshToken) {
+      if (!options.customizeToken) {
         state.token = state.mvm.getAuthToken();
       }
     }
