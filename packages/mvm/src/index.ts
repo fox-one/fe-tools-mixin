@@ -144,14 +144,27 @@ export default class MVM extends EventEmitter {
     const to = await bridge.getProxyUserContract(this.account);
     const value = fmtWithdrawAmount(String(amount), isNative);
 
+    const gasPrice = await this.library?.getGasPrice();
+    const balance = await this.library?.getBalance(this.account);
+
+    if (!balance || balance?.toNumber() <= 0) {
+      throw new Error("Insufficient Balance for Gas Fee");
+    }
+
     if (isNative) {
-      await this.contractOpt?.execBridgeContract("release", [to, extra], value);
-    } else {
-      await this.contractOpt?.execAssetContract(asset_id, "transferWithExtra", [
-        to,
+      await this.contractOpt?.execBridgeContract(
+        "release",
+        [to, extra],
         value,
-        extra
-      ]);
+        gasPrice?.toNumber() ?? 50000000
+      );
+    } else {
+      await this.contractOpt?.execAssetContract(
+        asset_id,
+        "transferWithExtra",
+        [to, value, extra],
+        gasPrice?.toNumber() ?? 50000000 // 0.05 GWei
+      );
     }
   }
 
@@ -159,9 +172,12 @@ export default class MVM extends EventEmitter {
     const isNative = assetId === NativeAssetId;
     const resp = isNative
       ? ((await this.library?.getBalance(this.account)) ?? "0").toString()
-      : await this.contractOpt?.execAssetContract(assetId, "balanceOf", [
-          this.account
-        ]);
+      : await this.contractOpt?.execAssetContract(
+          assetId,
+          "balanceOf",
+          [this.account],
+          0
+        );
     const balance = fmtBalance(resp, isNative);
     const asset = await this.cache.getAsset(assetId);
 

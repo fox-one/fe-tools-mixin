@@ -56,20 +56,25 @@ export default class ContractOpt {
     }
   }
 
-  async execAssetContract(assetId: string, method: string, args: string[]) {
+  async execAssetContract(
+    assetId: string,
+    method: string,
+    args: string[],
+    gasPrice
+  ) {
     const address = await this.getContractAddressByAssetId(assetId);
     const contract = new ethers.Contract(address, AssetABI, this.signer);
 
     return contract[method](...args, {
-      gasPrice: 10000000 // 0.01 Gwei
+      gasPrice
     });
   }
 
-  execBridgeContract(method: string, args: string[], value) {
+  execBridgeContract(method: string, args: string[], value, gasPrice) {
     const contract = new ethers.Contract(BridgeAddress, BridgeABI, this.signer);
 
     return contract[method](...args, {
-      gasPrice: 10000000, // 0.01 Gwei
+      gasPrice,
       value
     });
   }

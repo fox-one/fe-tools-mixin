@@ -9,6 +9,7 @@ module.exports = {
   entry: "./src/index.ts",
   target: "web",
   mode: "production",
+  // mode: "development",
   module: {
     rules: [
       {
@@ -28,6 +29,9 @@ module.exports = {
     new ProgressPlugin(true)
     // new BundleAnalyzerPlugin()
   ],
+  // optimization: {
+  //   minimize: false
+  // },
   output: {
     filename: "mvm.min.js",
     library: {
