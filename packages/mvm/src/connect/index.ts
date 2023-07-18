@@ -11,6 +11,6 @@ export default async function (
   } else if (type === "onekey") {
     return onekey();
   } else {
-    return walletconnect(config.infuraId);
+    return walletconnect(config.walletConnectProjectId);
   }
 }

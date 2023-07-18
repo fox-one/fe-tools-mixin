@@ -1,17 +1,12 @@
-import WalletConnectProvider from "@walletconnect/web3-provider";
+import { EthereumProvider } from "@walletconnect/ethereum-provider";
 import { MVMChain } from "../constants";
 
-export default async function (infuraId: string) {
+export default async function (projectId: string) {
   //  Create WalletConnect Provider
-  const provider = new WalletConnectProvider({
-    infuraId,
-    qrcodeModalOptions: {
-      desktopLinks: ["metamask", "imToken", "TokenPocket"],
-      mobileLinks: ["metamask", "imToken", "TokenPocket"]
-    },
-    rpc: {
-      [Number(MVMChain.chainId)]: MVMChain.rpcUrls[0]
-    }
+  const provider = await EthereumProvider.init({
+    chains: [1, Number(MVMChain.chainId)],
+    projectId,
+    showQrModal: true
   });
 
   //  Enable session (triggers QR Code modal)

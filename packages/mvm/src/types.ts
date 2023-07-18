@@ -1,6 +1,6 @@
 export interface MVMConfig {
   chainId?: boolean;
-  infuraId: string;
+  walletConnectProjectId: string;
 }
 
 export interface ProxyUser {

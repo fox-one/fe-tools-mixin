@@ -3,7 +3,9 @@ import MVM from "../src/index";
 
 describe("test mvm", () => {
   const account = "0xde04eDA29F6b031BfD28eB4e62e063aF886254D6";
-  const mvm = new MVM({ infuraId: "a018fa2f735a435f9a7917f0d429c61a" });
+  const mvm = new MVM({
+    walletConnectProjectId: "e7d132a26807a6184b4985e3ab742920"
+  });
   const testingUtils = generateTestingUtils({ providerType: "MetaMask" });
 
   beforeAll(() => {

@@ -74,6 +74,7 @@ export default class MVM extends EventEmitter {
     }
 
     const account = accounts[0];
+
     const address = utils.getAddress(account);
     const user = await bridge.getProxyUser(address);
 
@@ -147,7 +148,7 @@ export default class MVM extends EventEmitter {
     const gasPrice = await this.library?.getGasPrice();
     const balance = await this.library?.getBalance(this.account);
 
-    if (!balance || balance?.toNumber() <= 0) {
+    if (!balance || balance?.lte(0)) {
       throw new Error("Insufficient Balance for Gas Fee");
     }
 
@@ -170,6 +171,7 @@ export default class MVM extends EventEmitter {
 
   public async getAsset(assetId: string) {
     const isNative = assetId === NativeAssetId;
+
     const resp = isNative
       ? ((await this.library?.getBalance(this.account)) ?? "0").toString()
       : await this.contractOpt?.execAssetContract(

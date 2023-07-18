@@ -17,16 +17,16 @@ describe("test mvm connect", () => {
     }
   });
 
-  // test("connect with walletconnect", async (done) => {
-  //   try {
-  //     const provider = await connect("walletconnect", {
-  //       infuraId: "a018fa2f735a435f9a7917f0d429c61a"
-  //     });
+  test("connect with walletconnect", async (done) => {
+    try {
+      const provider = await connect("walletconnect", {
+        projectId: "e7d132a26807a6184b4985e3ab742920"
+      });
 
-  //     expect(provider).toBeTruthy();
-  //     done();
-  //   } catch (error) {
-  //     done(error);
-  //   }
-  // }, 100000);
+      expect(provider).toBeTruthy();
+      done();
+    } catch (error) {
+      done(error);
+    }
+  }, 100000);
 });
