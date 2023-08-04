@@ -1,6 +1,6 @@
 {
   "name": "@foxone/mixin-passport",
-  "version": "0.1.35",
+  "version": "0.1.36",
   "description": "Vue plugin of multi auth and payment helps for Mixin Network",
   "main": "index.js",
   "bugs": "https://github.com/fox-one/fe-tools-mixin/issues",
