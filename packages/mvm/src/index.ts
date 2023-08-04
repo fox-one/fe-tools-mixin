@@ -19,7 +19,7 @@ import { SiweMessage } from "siwe";
 export default class MVM extends EventEmitter {
   public user: ProxyUser | null = null;
 
-  private contractOpt: ContractOpt | null = null;
+  public contractOpt: ContractOpt | null = null;
 
   public library: providers.Web3Provider | null = null;
 
@@ -29,11 +29,11 @@ export default class MVM extends EventEmitter {
 
   public connected = false;
 
-  private api = new MixinAPI();
+  public api = new MixinAPI();
 
-  private config: MVMConfig;
+  public config: MVMConfig;
 
-  private cache: Cache;
+  public cache: Cache;
 
   constructor(config: MVMConfig) {
     super();
