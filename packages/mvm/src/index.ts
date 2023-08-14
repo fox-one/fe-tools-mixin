@@ -85,14 +85,6 @@ export default class MVM extends EventEmitter {
     this.contractOpt = new ContractOpt(library);
     this.connected = true;
     this.api.config(user.key);
-
-    provider.on("accountsChanged", () => this.disconnect());
-    provider.on("chainChanged", (chain) => {
-      if (chain !== MVMChain.chainId) {
-        this.disconnect();
-      }
-    });
-    provider.on("disconnect", () => this.disconnect());
   }
 
   public disconnect() {
