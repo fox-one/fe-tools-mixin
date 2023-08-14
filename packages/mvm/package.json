@@ -1,6 +1,6 @@
 {
   "name": "@foxone/mvm",
-  "version": "0.1.36",
+  "version": "0.1.37",
   "description": "FoxONE Mixin Virtual Network tools",
   "main": "dist/mvm.min.js",
   "jsdelivr": "dist/mvm.min.js",
@@ -13,7 +13,7 @@
     "build": "webpack --config webpack.config.js"
   },
   "dependencies": {
-    "@foxone/mixin-api": "^0.1.36",
+    "@foxone/mixin-api": "^0.1.37",
     "@metamask/detect-provider": "^1.2.0",
     "@walletconnect/ethereum-provider": "^2.9.0",
     "@walletconnect/modal": "^2.5.9",

@@ -1,6 +1,6 @@
 {
   "name": "@foxone/mixin-api",
-  "version": "0.1.36",
+  "version": "0.1.37",
   "description": "FoxONE Mixin Network javascript api service",
   "main": "index.js",
   "bugs": "https://github.com/fox-one/fe-tools-mixin/issues",
